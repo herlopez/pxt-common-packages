@@ -263,9 +263,9 @@ class Sprite extends sprites.BaseSprite {
     }
 
     setHitbox() {
-        let newHitBox = game.calculateHitBox(this);
+        const newHitBox = game.calculateHitBox(this);
 
-        if (!this._hitbox) {
+        if (!this._hitbox || this._hitbox.isValid()) {
             this._hitbox = newHitBox;
             return;
         }
@@ -779,9 +779,9 @@ class Sprite extends sprites.BaseSprite {
     overlapsWith(other: Sprite) {
         control.enablePerfCounter("overlapsCPP")
         if (other == this) return false;
-        if (this.flags & (SpriteFlag.GhostThroughSprites | SpriteFlag.RelativeToCamera))
+        if (this.flags & SPRITE_NO_SPRITE_OVERLAPS)
             return false
-        if (other.flags & (SpriteFlag.GhostThroughSprites | SpriteFlag.RelativeToCamera))
+        if (other.flags & SPRITE_NO_SPRITE_OVERLAPS)
             return false
         return other._image.overlapsWith(this._image, this.left - other.left, this.top - other.top)
     }

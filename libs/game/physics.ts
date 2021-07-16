@@ -208,7 +208,7 @@ class ArcadePhysicsEngine extends PhysicsEngine {
         }
     }
 
-    private createMovingSprite(sprite: Sprite, dtMs: number, dt2: number): MovingSprite {
+    protected createMovingSprite(sprite: Sprite, dtMs: number, dt2: number): MovingSprite {
         const ovx = this.constrain(sprite._vx);
         const ovy = this.constrain(sprite._vy);
         sprite._lastX = sprite._x;
@@ -300,7 +300,7 @@ class ArcadePhysicsEngine extends PhysicsEngine {
         );
     }
 
-    private spriteCollisions(movedSprites: MovingSprite[], handlers: scene.OverlapHandler[]) {
+    protected spriteCollisions(movedSprites: MovingSprite[], handlers: scene.OverlapHandler[]) {
         control.enablePerfCounter("phys_collisions");
         if (!handlers.length) return;
 
@@ -346,7 +346,7 @@ class ArcadePhysicsEngine extends PhysicsEngine {
         }
     }
 
-    private tilemapCollisions(movingSprite: MovingSprite, tm: tiles.TileMap) {
+    protected tilemapCollisions(movingSprite: MovingSprite, tm: tiles.TileMap) {
         const s = movingSprite.sprite;
         // if the sprite is already clipping into a wall,
         // allow free movement rather than randomly 'fixing' it
@@ -428,7 +428,9 @@ class ArcadePhysicsEngine extends PhysicsEngine {
                     );
 
                     for (const tile of collidedTiles) {
-                        s.registerObstacle(collisionDirection, tile, tm);
+                        if(!(s.flags & SPRITE_NO_WALL_COLLISION)) {
+                            s.registerObstacle(collisionDirection, tile, tm);
+                        }
                     }
 
                     if (s.flags & sprites.Flag.DestroyOnWall) {
@@ -507,7 +509,9 @@ class ArcadePhysicsEngine extends PhysicsEngine {
                     );
 
                     for (const tile of collidedTiles) {
-                        s.registerObstacle(collisionDirection, tile, tm);
+                        if(!(s.flags & SPRITE_NO_WALL_COLLISION)) {
+                            s.registerObstacle(collisionDirection, tile, tm);
+                        }
                     }
 
                     if (s.flags & sprites.Flag.DestroyOnWall) {
@@ -589,7 +593,7 @@ class ArcadePhysicsEngine extends PhysicsEngine {
      * @param sprite the sprite
      * @param overlappedTiles the list of tiles the sprite is overlapping
      */
-    private tilemapOverlaps(sprite: Sprite, overlappedTiles: tiles.Location[]) {
+    protected tilemapOverlaps(sprite: Sprite, overlappedTiles: tiles.Location[]) {
         const alreadyHandled: tiles.Location[] = [];
 
         for (const tile of overlappedTiles) {
@@ -724,7 +728,7 @@ class ArcadePhysicsEngine extends PhysicsEngine {
         return false;
     }
 
-    private constrain(v: Fx8) {
+    protected constrain(v: Fx8) {
         return Fx.max(
             Fx.min(
                 this.maxVelocity,
